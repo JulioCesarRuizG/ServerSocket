@@ -9,7 +9,7 @@ const webserver = express()
 
 //socket stuff 
 const { WebSocketServer } = require('ws')
-const sockserver = new WebSocketServer({ port: 443 })
+const sockserver = new WebSocketServer({ port: 8080 })
 let clients = new Map(); // Map to store all clients
 let clientIds=0;
 
