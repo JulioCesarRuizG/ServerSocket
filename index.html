@@ -10,7 +10,7 @@
   </form>
   <div id="messages"></div>
   <script>
-    const webSocket = new WebSocket('wss://quantum-chat-6a3d6542227c.herokuapp.com:443');
+    const webSocket = new WebSocket('wss://videochat-508g.onrender.com:443');
     webSocket.onmessage = (event) => {
       console.log(event)
       document.getElementById('messages').innerHTML += 
