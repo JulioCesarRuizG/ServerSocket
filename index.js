@@ -11,7 +11,7 @@ const webserver = express()
 const SocketIO = require('socket.io')
 
 const io = SocketIO();
-io.listen(8080);
+io.listen(3000);
 
 let clients = new Map(); // Map to store all clients
 let clientIds = 0;
