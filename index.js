@@ -10,13 +10,13 @@ const webserver = express()
 //socket stuff 
 const SocketIO = require('socket.io')
 
-var io = io('wss://videochat-508g.onrender.com', {transports: ['websocket']});
+var socket = io('wss://videochat-508g.onrender.com', {transports: ['websocket']});
 //io.listen(443);
 
 let clients = new Map(); // Map to store all clients
 let clientIds = 0;
 
-io.on('connection', socket => {
+socket.on('connection', socket => {
     console.log('New client connected!');
     socket.send('connection established');
 
@@ -28,7 +28,7 @@ io.on('connection', socket => {
     socket.on('message', data => {
         data = JSON.parse(data);
         console.log(`Received message \"${data.inputMessage}\" to client \"${data.toClient}\" from client \"${clientId}\"`);
-        io.emit('message', data);
+        socket.emit('message', data);
     });
 
     socket.on('close', () => {
