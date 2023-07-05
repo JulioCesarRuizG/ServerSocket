@@ -9,6 +9,6 @@
   },
   "scripts": {
     "start": "node index.js",
-    "build": "npm install && ng build"
+    "build": "npm install"
   }
 }
