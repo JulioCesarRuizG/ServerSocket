@@ -8,35 +8,35 @@ const webserver = express()
 
 
 //socket stuff 
-const { WebSocketServer } = require('ws')
-const sockserver = new WebSocketServer({ port: 8080 })
-let clients = new Map(); // Map to store all clients
-let clientIds=0;
+const SocketIO = require('socket.io')
 
-sockserver.on('connection', ws => {
-    console.log('New client connected!')
-    ws.send('connection established')
+const io = SocketIO();
+io.listen(8080);
+
+let clients = new Map(); // Map to store all clients
+let clientIds = 0;
+
+io.on('connection', socket => {
+    console.log('New client connected!');
+    socket.send('connection established');
 
     let clientId = clientIds++; // this Is most be obtained from a token gotten from auth
-    clients.set(clientId, ws);
+    clients.set(clientId, socket);
 
-    ws.on('close', () => console.log('Client has disconnected!'))
+    socket.on('close', () => console.log('Client has disconnected!'));
 
-    ws.on('message', data => {
-        data=JSON.parse(data)
-        console.log(`Received message \"${data.inputMessage}\" to client  \"${data.toClient}\" from client \"${clientId}\"`);
-        sockserver.clients.forEach(client => {
-            console.log(`distributing message: ${data.inputMessage}`)
-            client.send(`${data.inputMessage}`)
-        })
-    })
+    socket.on('message', data => {
+        data = JSON.parse(data);
+        console.log(`Received message \"${data.inputMessage}\" to client \"${data.toClient}\" from client \"${clientId}\"`);
+        io.emit('message', data);
+    });
 
-    ws.on('close', () => {
+    socket.on('close', () => {
         console.log(`Disconnected the client ${clientId}`);
         clients.delete(clientId); // Clean up when socket is closed
     });
+});
 
-    ws.onerror = function () {
-        console.log('websocket error')
-    }
-})
+io.on('error', (error) => {
+    console.log('websocket error', error);
+});
