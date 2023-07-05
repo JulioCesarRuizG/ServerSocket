@@ -8,35 +8,38 @@ const webserver = express()
 
 
 //socket stuff 
-const SocketIO = require('socket.io')
 
-var socket = io('wss://videochat-508g.onrender.com', {transports: ['websocket']});
+const WebSocket = require('ws')
+var sockserver = new WebSocket("wss://videochat-508g.onrender.com");
 //io.listen(443);
 
 let clients = new Map(); // Map to store all clients
-let clientIds = 0;
+let clientIds=0;
 
-socket.on('connection', socket => {
-    console.log('New client connected!');
-    socket.send('connection established');
+sockserver.on('connection', ws => {
+    console.log('New client connected!')
+    ws.send('connection established')
 
     let clientId = clientIds++; // this Is most be obtained from a token gotten from auth
-    clients.set(clientId, socket);
+    clients.set(clientId, ws);
 
-    socket.on('close', () => console.log('Client has disconnected!'));
+    ws.on('close', () => console.log('Client has disconnected!'))
 
-    socket.on('message', data => {
-        data = JSON.parse(data);
-        console.log(`Received message \"${data.inputMessage}\" to client \"${data.toClient}\" from client \"${clientId}\"`);
-        socket.emit('message', data);
-    });
+    ws.on('message', data => {
+        data=JSON.parse(data)
+        console.log(`Received message \"${data.inputMessage}\" to client  \"${data.toClient}\" from client \"${clientId}\"`);
+        sockserver.clients.forEach(client => {
+            console.log(`distributing message: ${data.inputMessage}`)
+            client.send(`${data.inputMessage}`)
+        })
+    })
 
-    socket.on('close', () => {
+    ws.on('close', () => {
         console.log(`Disconnected the client ${clientId}`);
         clients.delete(clientId); // Clean up when socket is closed
     });
-});
 
-io.on('error', (error) => {
-    console.log('websocket error', error);
-});
+    ws.onerror = function () {
+        console.log('websocket error')
+    }
+})
