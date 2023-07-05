@@ -10,8 +10,8 @@ const webserver = express()
 //socket stuff 
 const SocketIO = require('socket.io')
 
-const io = SocketIO();
-io.listen(443);
+var io = io('wss://videochat-508g.onrender.com', {transports: ['websocket']});
+//io.listen(443);
 
 let clients = new Map(); // Map to store all clients
 let clientIds = 0;

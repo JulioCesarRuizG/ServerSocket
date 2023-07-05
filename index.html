@@ -10,7 +10,9 @@
   </form>
   <div id="messages"></div>
   <script>
-    const webSocket = new WebSocket('wss://videochat-508g.onrender.com');
+    //const webSocket = new WebSocket('wss://videochat-508g.onrender.com');
+    const WebSocket = require('ws')
+    const webSocket = new WebSocket.Server({ port: 10000 })
     webSocket.onmessage = (event) => {
       console.log(event)
       document.getElementById('messages').innerHTML += 
